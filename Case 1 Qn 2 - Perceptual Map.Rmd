@@ -1,0 +1,54 @@
+---
+title: "Questions for Case 1 - 2. Perceptual Map"
+output: html_notebook
+---
+
+```{r}
+rm(list=ls())
+```
+
+```{r}
+# load these packages
+require(readxl)
+require(ggplot2)
+require(MASS)
+library(FactoMineR)
+library(factoextra)
+```
+
+```{r}
+# read the data
+college_data <- as.data.frame(
+  read.csv("~/Documents/Academics/Y4S2/MADM/Case 1/aggregated_data.csv", header =TRUE))
+
+college_data_without_headings = college_data[1:7, 3:9]
+
+colleges <- list("Harvard", "HEC", "IESE", "INSEAD", "Kellogg", "Stanford", "Wharton")
+rownames(college_data_without_headings) <- colleges
+
+college_data_without_headings
+```
+
+```{r}
+# now use princomp to run the principle component analysis
+college.pca <- PCA(college_data_without_headings, graph=FALSE)
+
+# variance explained by each dimension
+dimdesc(college.pca, proba=1, axes=c(1:4))
+fviz_screeplot(college.pca, addlabels = TRUE)
+fviz_pca_biplot(college.pca, axes=c(1,2), repel=TRUE)
+
+```
+
+```{r}
+# contributions of data to each dimension
+#- visualizing the output from running the function dimdesc
+#- contribution from each airline
+fviz_contrib(college.pca, choice="ind", axes=1)
+fviz_contrib(college.pca, choice="ind", axes=2)
+#- contribution from each attribute
+fviz_contrib(college.pca, choice="var", axes=1)
+fviz_contrib(college.pca, choice="var", axes=2)
+```
+
+

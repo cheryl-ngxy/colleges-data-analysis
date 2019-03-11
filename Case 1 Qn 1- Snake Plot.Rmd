@@ -1,0 +1,84 @@
+---
+title: "Questions for Case 1 - 1. Snake Plot"
+output: html_notebook
+---
+
+```{r}
+rm(list=ls())
+
+```
+
+```{r}
+#load these packages
+require(readxl)
+require(ggplot2)
+require(MASS)
+require(dplyr)
+library(FactoMineR)
+library(factoextra)
+```
+
+```{r}
+# read the data
+college_data <- as.data.frame(
+  read_excel("~/Documents/Academics/Y4S2/MADM/Case 1/Whosn1 Data (3).xlsx", sheet="Data"))
+
+```
+
+```{r}
+#renaming the columns
+
+colnames(college_data)[colnames(college_data)=="Q17_3"] <- "Career prospects"
+colnames(college_data)[colnames(college_data)=="Q17_6"] <- "World-class city"
+colnames(college_data)[colnames(college_data)=="Q17_7"] <- "Funding options"
+colnames(college_data)[colnames(college_data)=="Q17_8"] <- "International"
+colnames(college_data)[colnames(college_data)=="Q17_20"] <- "Salary potential"
+colnames(college_data)[colnames(college_data)=="Q17_23"] <- "Alumni network"
+colnames(college_data)[colnames(college_data)=="Q17_26"] <- "Ranking"
+colnames(college_data)[colnames(college_data)=="Q17_30"] <- "Top in sector"
+
+college_data
+
+```
+```{r}
+#select required questions plus filter for directly competing schools
+college_data %>% 
+  select(PrefSchool, `Career prospects`, `World-class city`, `Funding options`, International, `Salary potential`, `Alumni network`, Ranking, `Top in sector`) %>%
+  filter(PrefSchool %in% c("Wharton", "Harvard", "HEC", "IESE", "Kellogg", "LBS", "Stanford", "INSEAD")) %>%
+  write.csv(.,file = "~/Documents/Academics/Y4S2/MADM/Case 1/Cleaned_up_data_q1.csv")
+
+```
+
+```{r}
+cleaned_data <- as.data.frame(
+  read.csv("~/Documents/Academics/Y4S2/MADM/Case 1/Cleaned_up_data_q1.csv", header =TRUE))
+
+cleaned_data
+```
+
+```{r}
+#aggregating the data
+#grouped by PrefSchool
+#averaged for each attribute
+aggregated_data <- aggregate(cleaned_data[, 2:10], list(Pref.School=cleaned_data$PrefSchool), mean)
+aggregated_data$PrefSchool <- NULL
+
+aggregated_data
+
+write.csv(aggregated_data, file = '~/Documents/Academics/Y4S2/MADM/Case 1/aggregated_data.csv')
+
+
+```
+```{r}
+#Plotting
+
+require(reshape2)
+melted_data <- melt(aggregated_data, id.vars="Pref.School")
+
+# Everything on the same plot
+ggplot(melted_data, aes(variable, value, col = Pref.School, group = Pref.School)) + 
+  geom_point() +
+  geom_line(direction = 'vh') +
+  coord_flip()
+```
+
