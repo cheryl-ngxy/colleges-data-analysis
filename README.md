@@ -9,4 +9,4 @@ By analyzing the results of Q17, we can come up with
 1. Snake plot (to compare differences between direct competitors)
 2. Perceptual map
 
-These helps us to identify and determine a good positioning strategy.
+These help us to identify and determine a good positioning strategy.
